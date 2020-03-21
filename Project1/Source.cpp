@@ -67,7 +67,7 @@ namespace ArtGallery {
 		int n = sizeof(paintinglocations) / sizeof(paintinglocations[0]);
 		std::sort(paintinglocations, paintinglocations + n);
 		std::vector<int> positions;
-		positions.push_back(paintinglocations[0]);
+		positions.push_back(paintinglocations[0] + GUARDDISTANCE);
 		int previous = 0;
 		int nextposition = 1;
 		for (int i = 1; i < 9; i++) {
@@ -189,10 +189,24 @@ namespace Triathalon {
 	}
 }
 
+namespace TernaryHuffman {
+	void encodeCharacters() {
+
+	}
+}
+
+namespace COVID19 {
+	void findValidSchedule() {
+
+	}
+}
+
 int main() {
 	srand(time(NULL));
+	TernaryHuffman::encodeCharacters();		//Q2
 	ArtGallery::findPlacement();			//Q3
 	Triathalon::makeSchedule();				//Q4
+	COVID19::findValidSchedule();			//Q5
 	PrintingFlexes::makeSchedule();			//Q6
 	CustomerPriority::makeSchedule();		//Q7
 }
