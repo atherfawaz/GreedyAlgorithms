@@ -78,9 +78,16 @@ namespace ArtGallery {
 				nextposition++;
 			}
 			nextposition++;
+			if (nextposition > 9) {
+				break;
+			}
 		}
 		std::cout << "###QUESTION 3###\n";
-		std::cout << "Guards should be positioned at the following locations: ";
+		std::cout << "For the following positions: \n";
+		for (int i = 0; i < 10; i++) {
+			std::cout << paintinglocations[i] << " ";
+		}
+		std::cout << "\nGuards should be positioned at the following locations: ";
 		for (int i = 0; i < positions.size(); i++) {
 			std::cout << positions[i] << " ";
 		}
