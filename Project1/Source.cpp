@@ -170,22 +170,37 @@ namespace Triathalon {
 	private:
 		int runningtime;
 		int bikingtime;
-		int swimmingtime;
+		double swimmingtime;
 		int position;
+		double usageratio;
 	public:
 		Camper() {
 			RUNNERCOUNTER++;
 			runningtime = rand() % 20 + 1;
 			bikingtime = rand() % 20 + 1;
 			swimmingtime = rand() % 20 + 1;
+			usageratio = swimmingtime / 20;
 			position = RUNNERCOUNTER;
 		}
 		void print() {
-
+			std::cout << this->position << " ";
+		}
+		double getRatio() {
+			return this->usageratio;
 		}
 	};
+	bool compareUsageRatio(Camper c1, Camper c2) {
+		return (c1.getRatio() > c2.getRatio());
+	}
 	void makeSchedule() {
 		Camper campers[10];
+		int n = sizeof(campers) / sizeof(campers[0]);
+		std::sort(campers, campers + n, compareUsageRatio);
+		std::cout << "\n###QUESTION 4###\n";
+		std::cout << "The schedule is as follows: ";
+		for (int i = 0; i < 10; i++) {
+			campers[i].print();
+		}
 	}
 }
 
@@ -196,7 +211,39 @@ namespace TernaryHuffman {
 }
 
 namespace COVID19 {
+	/*
+	The spread of COVID-19 in Pakistan has resulted in closure of academic Institutes. The 
+	management of FAST Lahore decided to save your academic year by conducting online sessions 
+	(video lectures). There are total n videos that need to be streamed one after the other. Each 
+	video vi consists of bi bits that needs to be sent at a constant rate over a period of ti seconds. 
+	There is only one connection allowed so two videos can’t be sent at a time. This means scheduling 
+	of videos is required (an order in which to send these videos). Whichever order is chosen, 
+	there cannot be any delays between the end of one video and the start of the next. The 
+	connection does not want its user taking up too much bandwidth, so it imposes the following 
+	constraint, using a fixed parameter r: For each natural number t > 0, the total number of bits 
+	you send over the time interval from 0 to t cannot exceed r*t. A schedule is considered valid if 
+	it satisfies the constraint imposed by the connection. You are a computer science expert and 
+	management of FAST need your services. Given a set of n video streams specified by its number 
+	of bits bi and its time duration ti, they need to determine whether there exists a valid 
+	schedule that satisfies connection parameter r. For example you have 3 videos with (b1,t1)=(2000,1), 
+	(b2,t2)=(6000,2) and (b3,t3)=(2000,1) also r=5000. The schedule that runs videos in order 1, 
+	2, 3, is valid because at time t=1 the first stream is sent and 2000 < 5000*1 at time t=2 
+	2000+3000(half of second video)<5000*2 similar calculation can be done to check the constraint 
+	for t=3 and t=4.
+	*/
+	int PARAMETER = 5000;		//r
+	class Video {
+	private:
+		int period;
+		int bits;
+	public:
+		Video() {
+			period = rand() % 3 + 1;
+			bits = rand() % 2500 + 1;
+		}
+	};
 	void findValidSchedule() {
+		Video vidoes[10];
 
 	}
 }
