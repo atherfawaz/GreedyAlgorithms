@@ -78,9 +78,7 @@ namespace ArtGallery {
 				nextposition++;
 			}
 			nextposition++;
-			if (nextposition > 9) {
-				break;
-			}
+
 		}
 		std::cout << "###QUESTION 3###\n";
 		std::cout << "For the following positions: \n";
@@ -222,8 +220,24 @@ namespace Triathalon {
 }
 
 namespace TernaryHuffman {
+	class Node {
+	public:
+		char character;
+		int frequency;
+		Node* left, * right, *addition;
+		Node() {
+			left = right = addition = nullptr;
+			character = '\0';
+			frequency = -1;
+		}
+		Node(char c, int f) {
+			left = right = addition = nullptr;
+			character = c;
+			frequency = f;
+		}
+	};
 	void encodeCharacters() {
-
+		std::cout << "###QUESTION 2###\n";
 	}
 }
 
