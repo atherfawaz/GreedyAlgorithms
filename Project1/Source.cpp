@@ -167,19 +167,22 @@ namespace Triathalon {
 	*/
 	int RUNNERCOUNTER = 0;
 	class Camper {
-	private:
-		int runningtime;
-		int bikingtime;
+	public:
+		double runningtime;
+		double bikingtime;
 		double swimmingtime;
 		int position;
 		double usageratio;
-	public:
+		int totaltime;
+		double sum;
 		Camper() {
 			RUNNERCOUNTER++;
+			totaltime = 0;
 			runningtime = rand() % 20 + 1;
 			bikingtime = rand() % 20 + 1;
 			swimmingtime = rand() % 20 + 1;
-			usageratio = swimmingtime / 20;
+			sum = runningtime + bikingtime + swimmingtime;
+			usageratio = (runningtime + bikingtime) / swimmingtime;
 			position = RUNNERCOUNTER;
 		}
 		void print() {
@@ -187,6 +190,9 @@ namespace Triathalon {
 		}
 		double getRatio() {
 			return this->usageratio;
+		}
+		double getSwimmmingTime() {
+			return this->swimmingtime;
 		}
 	};
 	bool compareUsageRatio(Camper c1, Camper c2) {
@@ -201,6 +207,17 @@ namespace Triathalon {
 		for (int i = 0; i < 10; i++) {
 			campers[i].print();
 		}
+		int maxtime = campers[0].sum;
+		int currtime = 0;
+		for (int i = 1; i < 10; i++) {
+			for (int j = i - 1; j >= 0; j--) {
+				campers[i].sum += campers[j].swimmingtime;
+			}
+			if (campers[i].sum > maxtime) {
+				maxtime = campers[i].sum;
+			}
+		}
+		std::cout << "\nTotal time: " << maxtime;
 	}
 }
 
@@ -232,14 +249,18 @@ namespace COVID19 {
 	for t=3 and t=4.
 	*/
 	int PARAMETER = 5000;		//r
+	int VIDEOPOSITION = 0;
 	class Video {
 	private:
 		int period;
 		int bits;
+		int position;
 	public:
 		Video() {
 			period = rand() % 3 + 1;
-			bits = rand() % 2500 + 1;
+			bits = (rand() % 10 + 1) * 1000;
+			VIDEOPOSITION++;
+			position = VIDEOPOSITION;
 		}
 	};
 	void findValidSchedule() {
