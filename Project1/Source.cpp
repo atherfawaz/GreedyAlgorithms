@@ -257,15 +257,108 @@ namespace COVID19 {
 		int position;
 	public:
 		Video() {
-			period = rand() % 3 + 1;
+			period = rand() % 2 + 1;
 			bits = (rand() % 10 + 1) * 1000;
 			VIDEOPOSITION++;
 			position = VIDEOPOSITION;
 		}
+		Video(int p, int b, int x) {
+			period = p;
+			bits = b;
+			position = x;
+		}
+		int getPeriod() {
+			return period;
+		}
+		int getBits() {
+			return bits;
+		}
+		int getPosition() {
+			return position;
+		}
+		void print() {
+			std::cout << this->position << " ";
+		}
 	};
+	bool compareVideos(Video v1, Video v2) {
+		return (v1.getBits() > v2.getBits());
+	}
 	void findValidSchedule() {
-		Video vidoes[10];
-
+		std::vector<Video> bit_1;
+		std::vector<Video> bit_2;
+		Video videos[10];
+		int n = (sizeof(videos) / sizeof(videos[0]));
+		int total = 0;
+		for (int i = 0; i < 10; i++) {
+			total += videos[i].getBits();
+			if (videos[i].getPeriod() == 1) {
+				bit_1.push_back(videos[i]);
+			}
+			else {
+				bit_2.push_back(videos[i]);
+			}
+		}
+		int bandwidthused = 0;
+		int save = 0;
+		bool valid = true;
+		std::vector<Video> schedule;
+		std::sort(bit_1.begin(), bit_1.end(), compareVideos);
+		std::sort(bit_2.begin(), bit_2.end(), compareVideos);
+		for (int i = 1; i <= total; i++) {
+			if (!bit_1.empty()) {
+				bandwidthused += bit_1.back().getBits();
+				if (bandwidthused <= PARAMETER * i) {
+					Video temp(bit_1.back().getPeriod(), bit_1.back().getBits(), bit_1.back().getPosition());
+					schedule.push_back(temp);
+					bit_1.pop_back();
+				}
+				else {
+					bandwidthused -= bit_1.back().getBits();
+				}
+			}
+			else if (!bit_2.empty()) {
+				bandwidthused += bit_2.back().getBits();
+				if (bandwidthused <= PARAMETER * i) {
+					//can add whole video
+					Video temp(bit_2.back().getPeriod(), bit_2.back().getBits(), bit_2.back().getPosition());
+					schedule.push_back(temp);
+					bit_2.pop_back();
+				}
+				else {
+					//cant add whole video 
+					bandwidthused -= bit_2.back().getBits() / 2;
+					if (!bandwidthused <= PARAMETER * i) {
+						//doesnt fit in even after dividing so cant form 
+						//a schedule for this configuration
+						valid = false;
+						save = i;
+						break;
+					}
+					else {
+						if (bit_2.back().getPeriod() != 1) {
+							//havent cut it down previously
+							Video temp(1, bit_2.back().getBits() / 2, bit_2.back().getPosition());
+							bit_2.pop_back();
+							bit_1.push_back(temp);
+							schedule.push_back(temp);
+						}
+						else {
+							//filling in the rest, cut down previously
+							Video temp(bit_2.back().getPeriod(), bit_2.back().getBits() / 2, bit_2.back().getPosition());
+							schedule.push_back(temp);
+							bit_2.pop_back();
+						}
+					}
+				}
+			}
+		}
+		std::cout << "\n###QUESTION 5###";
+		if (save < total - 1) {
+			std::cout << "\nValid schedule does not exist.";
+		}
+		else {
+			std::cout << "\nValid schedule exists.";
+		}
 	}
 }
 
