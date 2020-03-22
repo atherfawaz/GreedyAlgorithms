@@ -87,7 +87,8 @@ namespace ArtGallery {
 		}
 		std::cout << "\nGuards should be positioned at the following locations: ";
 		for (int i = 0; i < positions.size(); i++) {
-			std::cout << positions[i] << " ";
+			if (positions[i] < 100)
+				std::cout << positions[i] << " ";
 		}
 	}
 }
@@ -367,7 +368,11 @@ namespace COVID19 {
 			}
 		}
 		std::cout << "\n###QUESTION 5###";
-		if (save < total - 1) {
+		std::cout << "\nThe videos that could be played, ordered by position, were: ";
+		for (int i = 0; i < schedule.size(); i++) {
+			schedule[i].print();
+		}
+		if (schedule.size() != 10) {
 			std::cout << "\nValid schedule does not exist.";
 		}
 		else {
