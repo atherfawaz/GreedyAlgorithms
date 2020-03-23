@@ -2,7 +2,10 @@
 #include <algorithm>
 #include <iostream>
 #include <time.h>
+#include <functional>
 #include <vector>
+#include <queue>
+#include <string>
 
 namespace CustomerPriority {
 	/*
@@ -80,7 +83,7 @@ namespace ArtGallery {
 			nextposition++;
 
 		}
-		std::cout << "###QUESTION 3###\n";
+		std::cout << "\n###QUESTION 3###\n";
 		std::cout << "For the following positions: \n";
 		for (int i = 0; i < 10; i++) {
 			std::cout << paintinglocations[i] << " ";
@@ -221,24 +224,94 @@ namespace Triathalon {
 }
 
 namespace TernaryHuffman {
+	/*
+	Ternary Huffman. Trimedia Disks Inc. has developed ternary hard disks. Each 
+	cell on a disk can now store values 0, 1, or 2 (instead of just 0 or 1). To take 
+	advantage of this new technology, we need a modified Huffman algorithm for 
+	compressing sequences of characters from an alphabet of size n, where the characters 
+	occur with known frequencies f1, f2, …, fn. Your algorithm should encode each 
+	character with a variable-length code word over the values 0, 1, 2 such that no 
+	code word is a prefix of another code word and so as to obtain the maximum 
+	possible compression.
+	*/
 	class Node {
 	public:
 		char character;
 		int frequency;
-		Node* left, * right, *addition;
+		Node* left, * right, * mid;
 		Node() {
-			left = right = addition = nullptr;
+			left = right = mid = nullptr;
 			character = '\0';
 			frequency = -1;
 		}
 		Node(char c, int f) {
-			left = right = addition = nullptr;
+			left = right = mid = nullptr;
 			character = c;
 			frequency = f;
 		}
 	};
+
+	struct compareCharacterFreq {
+		bool operator()(Node* l, Node* r) {
+			return (l->frequency > r->frequency);
+		}
+	};
+
+	std::priority_queue<Node*, std::vector<Node*>, compareCharacterFreq> HEAP;
+	char CHARACTERS[] = { 'B','E','C','K','Y' };
+	int FREQUENCIES[] = { 2, 3, 5, 7, 11, 13, 17 };
+	int SIZE = sizeof(CHARACTERS) / sizeof(CHARACTERS[0]);
+
+	void generateTree() {
+		Node* left;
+		Node* mid;
+		Node* right;
+		Node* parent;
+		for (int i = 0; i < SIZE; ++i) {
+			HEAP.push(new Node(CHARACTERS[i], FREQUENCIES[i]));
+		}
+		while (HEAP.size() != 1) {
+			left = HEAP.top();
+			HEAP.pop();
+			mid = HEAP.top();
+			HEAP.pop();
+			if (HEAP.size() != 0) {
+				right = HEAP.top();
+				HEAP.pop();
+			}
+			else {
+				right = new Node('#', 0);
+			}
+			parent = new Node('$', left->frequency + mid->frequency + right->frequency);
+			parent->left = left;
+			parent->mid = mid;
+			parent->right = right;
+			HEAP.push(parent);
+		}
+	}
+
+	void getCodes(Node* top = HEAP.top(), std::string placeholder = "") {
+		if (!top) {
+			return;
+		}
+		if (top->character != '$' && top->character != '#') {
+			std::cout << top->character << ": " << placeholder << " || ";
+		}
+		getCodes(top->left, placeholder + "0");
+		getCodes(top->mid, placeholder + "1");
+		getCodes(top->right, placeholder + "2");
+	}
+	
 	void encodeCharacters() {
+		generateTree();
 		std::cout << "###QUESTION 2###\n";
+		std::cout << "For the following data: \n";
+		for (int i = 0; i < SIZE; i++) {
+			std::cout << "Character: " << CHARACTERS[i] << " with Frequency: " << FREQUENCIES[i] << std::endl;
+		}
+		std::cout << "The encoding scheme is as follows: \n";
+		getCodes(HEAP.top(), "");
+		int x = 0;
 	}
 }
 
@@ -373,10 +446,10 @@ namespace COVID19 {
 			schedule[i].print();
 		}
 		if (schedule.size() != 10) {
-			std::cout << "\nValid schedule does not exist.";
+			std::cout << "\nAll ten videos could not be played. Valid schedule does not exist.";
 		}
 		else {
-			std::cout << "\nValid schedule exists.";
+			std::cout << "\nAll ten videos have been played. Valid schedule exists.";
 		}
 	}
 }
