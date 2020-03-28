@@ -103,6 +103,7 @@ namespace ArtGallery {
 		for (int i = 0; i < 10; i++) {
 			std::cout << paintinglocations[i] << " ";
 		}
+		std::cout << "\nWith d = " << GUARDDISTANCE;
 		std::cout << "\nGuards should be positioned at the following locations: ";
 		for (int i = 0; i < positions.size(); i++) {
 			if (positions[i] < 100 && positions[i] >= 0)
