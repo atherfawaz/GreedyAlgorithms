@@ -25,7 +25,7 @@ namespace CustomerPriority {
 		Customer() {
 			priority = rand() % 10 + 1;
 			waitingtime = rand() % 10 + 1;
-			ratio = waitingtime / priority;
+			ratio = waitingtime * priority;
 			CUSTOMER_COUNT++;
 			queueposition = CUSTOMER_COUNT;
 		}
@@ -37,7 +37,7 @@ namespace CustomerPriority {
 		}
 	};
 	bool compareRatios(Customer c1, Customer c2) {
-		return (c1.getRatio() > c2.getRatio());
+		return (c1.getRatio() < c2.getRatio());
 	}
 	void makeSchedule() {
 		Customer customers[10];
@@ -64,6 +64,7 @@ namespace ArtGallery {
 	int GUARDDISTANCE = 10;		// d
 	void findPlacement() {
 		int paintinglocations[10];
+		//int paintinglocations[] = {5, 7, 8, 14, 28, 35, 41, 42, 45, 45};
 		for (int i = 0; i < 10; i++) {
 			paintinglocations[i] = rand() % 50 + 1;
 		}
@@ -76,9 +77,23 @@ namespace ArtGallery {
 		for (int i = 1; i < 9; i++) {
 			if (positions[previous] + GUARDDISTANCE < paintinglocations[nextposition]) {
 				//we'll need another guard at the next painting
-				positions.push_back(paintinglocations[nextposition]);
-				previous++;
-				nextposition++;
+				if (i < n - 2) {
+					if (paintinglocations[nextposition + 1] - paintinglocations[nextposition] < GUARDDISTANCE) {
+						positions.push_back(paintinglocations[nextposition + 1]);
+						previous++;
+						nextposition++;
+					}
+					else {
+						positions.push_back(paintinglocations[nextposition]);
+						previous++;
+						nextposition++;
+					}
+				}
+				else {
+					positions.push_back(paintinglocations[nextposition]);
+					previous++;
+					nextposition++;
+				}
 			}
 			nextposition++;
 
@@ -90,7 +105,7 @@ namespace ArtGallery {
 		}
 		std::cout << "\nGuards should be positioned at the following locations: ";
 		for (int i = 0; i < positions.size(); i++) {
-			if (positions[i] < 100)
+			if (positions[i] < 100 && positions[i] >= 0)
 				std::cout << positions[i] << " ";
 		}
 	}
@@ -259,7 +274,7 @@ namespace TernaryHuffman {
 
 	std::priority_queue<Node*, std::vector<Node*>, compareCharacterFreq> HEAP;
 	char CHARACTERS[] = { 'B','E','C','K','Y' };
-	int FREQUENCIES[] = { 2, 3, 5, 7, 11, 13, 17 };
+	int FREQUENCIES[] = { 2, 3, 5, 7, 11, 13 };
 	int SIZE = sizeof(CHARACTERS) / sizeof(CHARACTERS[0]);
 
 	void generateTree() {
