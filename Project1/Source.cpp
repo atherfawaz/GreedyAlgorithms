@@ -352,7 +352,7 @@ namespace COVID19 {
 	2000+3000(half of second video)<5000*2 similar calculation can be done to check the constraint 
 	for t=3 and t=4.
 	*/
-	int PARAMETER = 1000;		//r
+	int PARAMETER = 2500;		//r
 	int TOTALBANDWIDTH = 0;
 	int VIDEOPOSITION = 0;
 	class Video {
@@ -446,10 +446,8 @@ namespace COVID19 {
 		for (int i = 0; i < schedule.size(); i++) {
 			schedule[i].print();
 		}
-		std::cout << "\nTotal bandwidth transmitted: " << bandwidth << std::endl;
-		std::cout << "Initial total bandwidth: " << TOTALBANDWIDTH << std::endl;
 		if (schedule.size() != 10) {
-			std::cout << "All ten videos could not be played. Valid schedule does not exist.";
+			std::cout << "\nAll ten videos could not be played. Valid schedule does not exist.";
 		}
 		else {
 			std::cout << "\nAll ten videos have been played. Valid schedule exists.";
