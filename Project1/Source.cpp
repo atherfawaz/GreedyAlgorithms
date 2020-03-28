@@ -352,17 +352,20 @@ namespace COVID19 {
 	2000+3000(half of second video)<5000*2 similar calculation can be done to check the constraint 
 	for t=3 and t=4.
 	*/
-	int PARAMETER = 5000;		//r
+	int PARAMETER = 1000;		//r
+	int TOTALBANDWIDTH = 0;
 	int VIDEOPOSITION = 0;
 	class Video {
 	private:
 		int period;
 		int bits;
+		double ratio;
 		int position;
 	public:
 		Video() {
 			period = rand() % 2 + 1;
 			bits = (rand() % 10 + 1) * 1000;
+			ratio = (double)bits / (double)period;
 			VIDEOPOSITION++;
 			position = VIDEOPOSITION;
 		}
@@ -370,6 +373,7 @@ namespace COVID19 {
 			period = p;
 			bits = b;
 			position = x;
+			ratio = (double)bits / (double)period;
 		}
 		int getPeriod() {
 			return period;
@@ -380,79 +384,60 @@ namespace COVID19 {
 		int getPosition() {
 			return position;
 		}
+		double getRatio() {
+			return ratio;
+		}
 		void print() {
 			std::cout << this->position << " ";
 		}
 	};
 	bool compareVideos(Video v1, Video v2) {
-		return (v1.getBits() > v2.getBits());
+		return (v1.getRatio() > v2.getRatio());
 	}
 	void findValidSchedule() {
-		std::vector<Video> bit_1;
-		std::vector<Video> bit_2;
-		Video videos[10];
-		int n = (sizeof(videos) / sizeof(videos[0]));
-		int total = 0;
+		std::vector<Video> videos;
+		videos.reserve(10);
 		for (int i = 0; i < 10; i++) {
-			total += videos[i].getBits();
-			if (videos[i].getPeriod() == 1) {
-				bit_1.push_back(videos[i]);
+			Video temp;
+			TOTALBANDWIDTH += temp.getBits();
+			videos.emplace_back(temp);
+		}
+		int n = (sizeof(videos) / sizeof(videos[0]));
+		std::sort(videos.begin(), videos.end(), compareVideos);
+		std::vector<Video> schedule;
+		int bandwidth = 0;
+		int t = 1;
+		while (schedule.size() != 10 && !videos.empty()) {
+			bandwidth += videos.back().getBits();
+			if (bandwidth <= t * PARAMETER) {
+				//can fit this whole video
+				if (videos.back().getPeriod() == 1) {
+					//remove this video, transmitted
+					Video temp(videos.back().getPeriod(), videos.back().getBits(), videos.back().getPosition());
+					schedule.push_back(temp);
+					videos.pop_back();
+					t++;
+				}
+				else {
+					//need to send this video in parts, 1 time quantum at a time
+					Video temp(videos.back().getPeriod(), videos.back().getBits(), videos.back().getPosition());
+					schedule.push_back(temp);
+					videos.pop_back();
+					t += videos.back().getPeriod();
+				}
 			}
 			else {
-				bit_2.push_back(videos[i]);
-			}
-		}
-		int bandwidthused = 0;
-		int save = 0;
-		bool valid = true;
-		std::vector<Video> schedule;
-		std::sort(bit_1.begin(), bit_1.end(), compareVideos);
-		std::sort(bit_2.begin(), bit_2.end(), compareVideos);
-		for (int i = 1; i <= total; i++) {
-			if (!bit_1.empty()) {
-				bandwidthused += bit_1.back().getBits();
-				if (bandwidthused <= PARAMETER * i) {
-					Video temp(bit_1.back().getPeriod(), bit_1.back().getBits(), bit_1.back().getPosition());
+				bandwidth -= videos.back().getBits();
+				bandwidth += videos.back().getBits() / 2;
+				if (bandwidth <= t * PARAMETER) {
+					Video temp(videos.back().getPeriod(), videos.back().getBits() / 2, videos.back().getPosition());
+					t += videos.back().getPeriod();
+					videos.pop_back();
 					schedule.push_back(temp);
-					bit_1.pop_back();
 				}
 				else {
-					bandwidthused -= bit_1.back().getBits();
-				}
-			}
-			else if (!bit_2.empty()) {
-				bandwidthused += bit_2.back().getBits();
-				if (bandwidthused <= PARAMETER * i) {
-					//can add whole video
-					Video temp(bit_2.back().getPeriod(), bit_2.back().getBits(), bit_2.back().getPosition());
-					schedule.push_back(temp);
-					bit_2.pop_back();
-				}
-				else {
-					//cant add whole video 
-					bandwidthused -= bit_2.back().getBits() / 2;
-					if (!bandwidthused <= PARAMETER * i) {
-						//doesnt fit in even after dividing so cant form 
-						//a schedule for this configuration
-						valid = false;
-						save = i;
-						break;
-					}
-					else {
-						if (bit_2.back().getPeriod() != 1) {
-							//havent cut it down previously
-							Video temp(1, bit_2.back().getBits() / 2, bit_2.back().getPosition());
-							bit_2.pop_back();
-							bit_1.push_back(temp);
-							schedule.push_back(temp);
-						}
-						else {
-							//filling in the rest, cut down previously
-							Video temp(bit_2.back().getPeriod(), bit_2.back().getBits() / 2, bit_2.back().getPosition());
-							schedule.push_back(temp);
-							bit_2.pop_back();
-						}
-					}
+					//cant add any video
+					break;
 				}
 			}
 		}
@@ -461,8 +446,10 @@ namespace COVID19 {
 		for (int i = 0; i < schedule.size(); i++) {
 			schedule[i].print();
 		}
+		std::cout << "\nTotal bandwidth transmitted: " << bandwidth << std::endl;
+		std::cout << "Initial total bandwidth: " << TOTALBANDWIDTH << std::endl;
 		if (schedule.size() != 10) {
-			std::cout << "\nAll ten videos could not be played. Valid schedule does not exist.";
+			std::cout << "All ten videos could not be played. Valid schedule does not exist.";
 		}
 		else {
 			std::cout << "\nAll ten videos have been played. Valid schedule exists.";
