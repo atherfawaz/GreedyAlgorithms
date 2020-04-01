@@ -190,7 +190,6 @@ namespace Triathalon {
 		double bikingtime;
 		double swimmingtime;
 		int position;
-		double usageratio;
 		int totaltime;
 		double sum;
 		Camper() {
@@ -199,43 +198,35 @@ namespace Triathalon {
 			runningtime = rand() % 20 + 1;
 			bikingtime = rand() % 20 + 1;
 			swimmingtime = rand() % 20 + 1;
-			sum = runningtime + bikingtime + swimmingtime;
-			usageratio = (runningtime + bikingtime) / swimmingtime;
+			sum = runningtime + bikingtime;
 			position = RUNNERCOUNTER;
 		}
 		void print() {
 			std::cout << this->position << " ";
 		}
-		double getRatio() {
-			return this->usageratio;
-		}
-		double getSwimmmingTime() {
-			return this->swimmingtime;
-		}
 	};
-	bool compareUsageRatio(Camper c1, Camper c2) {
-		return (c1.getRatio() > c2.getRatio());
+	bool compareTimes(Camper c1, Camper c2) {
+		return (c1.sum > c2.sum);
 	}
 	void makeSchedule() {
 		Camper campers[10];
 		int n = sizeof(campers) / sizeof(campers[0]);
-		std::sort(campers, campers + n, compareUsageRatio);
+		std::sort(campers, campers + n, compareTimes);
 		std::cout << "\n###QUESTION 4###\n";
 		std::cout << "The schedule is as follows: ";
 		for (int i = 0; i < 10; i++) {
 			campers[i].print();
 		}
-		int maxtime = campers[0].sum;
-		int currtime = 0;
+		int maxval = campers[0].sum + campers[0].swimmingtime;	//compare for max
+		int maxtime = campers[0].swimmingtime;
 		for (int i = 1; i < 10; i++) {
-			for (int j = i - 1; j >= 0; j--) {
-				campers[i].sum += campers[j].swimmingtime;
+			campers[i].totaltime = campers[i].sum + campers[i].swimmingtime + maxtime;
+			if (campers[i].totaltime > maxval) {
+				maxval = campers[i].totaltime;
 			}
-			if (campers[i].sum > maxtime) {
-				maxtime = campers[i].sum;
-			}
+			maxtime += campers[i].swimmingtime;
 		}
-		std::cout << "\nTotal time: " << maxtime;
+		std::cout << "\nTotal time: " << maxval;
 	}
 }
 
